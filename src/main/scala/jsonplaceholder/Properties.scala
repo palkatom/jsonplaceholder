@@ -1,6 +1,6 @@
 package jsonplaceholder
 
 object Properties {
-  val host = "http://jsonplaceholder.typicode.com"
+  val host = "https://jsonplaceholder.typicode.com"
   val outputDirectory = "output"
 }
