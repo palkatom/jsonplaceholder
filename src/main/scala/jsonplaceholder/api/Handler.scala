@@ -15,12 +15,18 @@ object Handler {
   implicit val serialization = Serialization
   implicit val backend = HttpURLConnectionBackend()
 
+  /*
+   * Send a GET request to `endpoint` and returned parsed result.
+   */
   private def sendReq[A](endpoint: String)(implicit m: Manifest[A]) =
     basicRequest
       .get(uri"$host".path(endpoint))
       .response(asJson[A])
       .send()
 
+  /*
+   * Modify response return value for easier handling.
+   */
   private def handleResp[A](resp: Response[Either[ResponseError[Exception], A]]): Either[HttpErrorWrapper, A] = {
     resp.code match {
       case StatusCode.Ok => Right(resp.body.right.get)
@@ -28,10 +34,16 @@ object Handler {
     }
   }
 
+  /*
+   * Get single post with `id`.
+   */
   def getPost(id: Int): Either[HttpErrorWrapper, Post] = {
     (sendReq[Post] _ andThen handleResp)(s"posts/$id")
   }
 
+  /*
+   * Get all posts.
+   */
   def getPosts: Either[HttpErrorWrapper, List[Post]] = {
     (sendReq[List[Post]] _ andThen handleResp)("posts")
   }
